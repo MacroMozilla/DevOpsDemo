@@ -31,7 +31,7 @@ jobs:
           python -m unittest discover -s tests
 
       # -------------------------
-      # 4. Set version (YYMMDD-SHORTSHA)
+      # 4. Set version (YYMMDD-SHORTSHA-USERNAME)
       # -------------------------
       - name: Set Version
         id: vars
