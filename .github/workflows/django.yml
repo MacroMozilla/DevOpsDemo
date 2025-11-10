@@ -19,7 +19,7 @@ jobs:
       # -------------------------
       - name: Build Docker image
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/django-app:latest .
+          docker build -f Dockerfile -t ${{ secrets.DOCKERHUB_USERNAME }}/django-app:latest .
 
       # -------------------------
       # 2. Login Docker Hub
