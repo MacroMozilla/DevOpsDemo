@@ -14,3 +14,4 @@ A simple **Django-based DevOps demo project** showcasing CI/CD workflows, Docker
 ---
 
 ## 🏗️ Project Structure
+
