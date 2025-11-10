@@ -2,9 +2,22 @@ name: Django CI & Docker Build
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - master
+    paths-ignore:
+      - README.md
+      - '**/*.md'
+      - 'docs/**'
+      - '.gitignore'
+
   pull_request:
-    branches: [ "master" ]
+    branches:
+      - master
+    paths-ignore:
+      - README.md
+      - '**/*.md'
+      - 'docs/**'
+      - '.gitignore'
 
 jobs:
   build:
