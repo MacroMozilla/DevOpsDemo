@@ -38,7 +38,8 @@ jobs:
         run: |
           DATE=$(date +'%y%m%d')
           SHA=$(echo ${{ github.sha }} | cut -c1-7)
-          echo "VERSION=${DATE}-${SHA}" >> $GITHUB_ENV
+          USER=${{ github.actor }}
+          echo "VERSION=${DATE}-${SHA}-${USER}" >> $GITHUB_ENV
 
       # -------------------------
       # 5. Build Docker image
