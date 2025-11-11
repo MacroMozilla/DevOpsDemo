@@ -20,7 +20,7 @@ on:
       - '.gitignore'
 
 jobs:
-  build:
+  build_and_push:
     runs-on: ubuntu-latest
 
     steps:
@@ -79,3 +79,40 @@ jobs:
         run: |
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/django-app:${{ env.VERSION }}
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/django-app:latest
+
+      - name: Send message to Slack
+        run: |
+          curl -X POST -H 'Content-type: application/json' \
+          --data "{
+            \"text\": \":rocket: Repository *${{ github.repository }}* received a new *${{ github.event_name }}* event!\n
+            Actor: *${{ github.actor }}*\n
+            Branch: *${{ github.ref_name }}*\n
+            <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|View Commit>\" 
+          }" \
+          ${{ secrets.SLACK_WEBHOOK_URL }}
+
+#  call_lambda:
+#    runs-on: ubuntu-latest
+#    needs: build_and_push
+#    steps:
+#      - name: Configure AWS credentials
+#        uses: aws-actions/configure-aws-credentials@v4
+#        with:
+#          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#          aws-region: us-east-1
+#
+#      - name: Invoke AWS Lambda
+#        run: |
+#          aws lambda invoke \
+#            --function-name myLambdaFunction \
+#            --payload '{"action":"docker_push_done"}' \
+#            response.json
+#          cat response.json
+#
+#      - name: Send notification via SES
+#        run: |
+#          aws ses send-email \
+#            --from "noreply@mydomain.com" \
+#            --destination "ToAddresses=user@example.com" \
+#            --message "Subject={Data=Deployment Complete},Body={Text={Data=Your Docker image was pushed successfully.}}"

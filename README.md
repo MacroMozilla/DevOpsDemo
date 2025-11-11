@@ -7,8 +7,7 @@ A simple **Django-based DevOps demo project** showcasing CI/CD workflows, Docker
 ## 🚀 Features
 - Django web framework setup  
 - Dockerized development environment  
-- GitHub Actions CI/CD pipeline  
-- Unit testing with `pytest`  
+- GitHub Actions CI/CD pipeline
 - Example deployment workflow  
 
 ---
