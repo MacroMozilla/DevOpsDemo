@@ -43,16 +43,32 @@ jobs:
         run: |
           python -m unittest discover -s tests
 
+      - name: Install yq
+        run: sudo apt-get update && sudo apt-get install -y yq
+
       # -------------------------
-      # 4. Set version (YYMMDD-SHORTSHA-USERNAME)
+      # 4. Set version (YYMMDD-release-SHORTSHA)
       # -------------------------
       - name: Set Version
         id: vars
         run: |
+          # 1️⃣ Read release version from release.yaml
+          RELEASE_VERSION=$(yq '.version' release.yaml)
+          
+          # 2️⃣ Generate build date and short commit hash
           DATE=$(date +'%y%m%d')
           SHA=$(echo ${{ github.sha }} | cut -c1-7)
-          USER=${{ github.actor }}
-          echo "VERSION=${DATE}-${SHA}-${USER}" >> $GITHUB_ENV
+          
+          # 3️⃣ Compose final build version
+          VERSION="${DATE}-${RELEASE_VERSION}-${SHA}"
+          
+          # 4️⃣ Export environment variables
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_ENV
+          
+          # 5️⃣ Print logs
+          echo "📦 VERSION=${VERSION}"
+          echo "🏷️ RELEASE_VERSION=${RELEASE_VERSION}"
 
       # -------------------------
       # 5. Build Docker image
