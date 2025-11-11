@@ -6,11 +6,11 @@ project:
     - Build and push Docker images to Docker Hub
     - Send deployment notifications to Slack
 
-version: "0.0.1"
+version: "0.0.2"
 changes:
   added:
     - None
   fixed:
     - None
   changed:
-    - change version standard
+    - add CodeQL check
