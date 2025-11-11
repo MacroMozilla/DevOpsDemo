@@ -85,26 +85,30 @@ jobs:
 
             PERCENT=$((COMPLETED * 100 / TOTAL))
 
+            jq -n --arg channel "${{ secrets.SLACK_CHANNEL_ID }}" \
+                  --arg ts "${{ steps.slack_start.outputs.ts }}" \
+                  --arg step "$NAME" \
+                  --arg bar "$BAR" \
+                  --arg percent "$PERCENT" \
+            '{
+              channel: $channel,
+              ts: $ts,
+              blocks: [
+                {
+                  type: "header",
+                  text: { type: "plain_text", text: "CI/CD Pipeline Running 🚀" }
+                },
+                {
+                  type: "section",
+                  text: { type: "mrkdwn", text: ("*Current Step:* " + $step + "\n*Progress:* " + $bar + " " + $percent + "%") }
+                }
+              ]
+            }' > payload.json
+
             curl -s -X POST \
               -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
               -H "Content-type: application/json" \
-              --data "$(cat <<EOF
-              {
-                "channel": "${{ secrets.SLACK_CHANNEL_ID }}",
-                "ts": "${{ steps.slack_start.outputs.ts }}",
-                "blocks": [
-                  {
-                    "type": "header",
-                    "text": { "type": "plain_text", "text": "CI/CD Pipeline Running 🚀" }
-                  },
-                  {
-                    "type": "section",
-                    "text": { "type": "mrkdwn", "text": "*Current Step:* $NAME\n*Progress:* $BAR $PERCENT%" }
-                  }
-                ]
-              }
-              EOF
-              )" \
+              --data @payload.json \
               https://slack.com/api/chat.update > /dev/null
           }
 
