@@ -1,6 +1,6 @@
 import os
 import requests
-from pprint import pprint
+
 
 class DockerHubManager:
     """A simple wrapper for the Docker Hub REST API."""
@@ -61,7 +61,7 @@ class DockerHubManager:
 
 
 if __name__ == "__main__":
-    
+
     manager = DockerHubManager()
     repos = manager.get_repos()
     for repo in repos:

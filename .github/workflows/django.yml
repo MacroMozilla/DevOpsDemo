@@ -92,9 +92,18 @@ jobs:
         run: |
           echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> $GITHUB_ENV
           echo "🐳 DockerHub username set to ${{ secrets.DOCKERHUB_USERNAME }}"
+      
 
       # -------------------------
-      # 5.3 Build Docker image
+      # 5.3 Set DockerHub username
+      # -------------------------
+      - name: Set DockerHub username
+        run: |
+          echo "DEEPSEEK_API_KEY=${{ secrets.DEEPSEEK_API_KEY }}" >> $GITHUB_ENV
+          echo "Set DEEPSEEK_API_KEY"
+
+      # -------------------------
+      # 5.4 Build Docker image
       # -------------------------
       - name: Build Docker image
         run: |
