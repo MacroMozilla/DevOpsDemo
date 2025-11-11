@@ -87,7 +87,8 @@ jobs:
             \"text\": \":rocket: Repository *${{ github.repository }}* received a new *${{ github.event_name }}* event!\n
             Actor: *${{ github.actor }}*\n
             Branch: *${{ github.ref_name }}*\n
-            <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|View Commit>\" 
+            <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|View Commit>\n
+            Commit Message: *${{ github.event.head_commit.message }}*\"
           }" \
           ${{ secrets.SLACK_WEBHOOK_URL }}
 
