@@ -1,5 +1,5 @@
 import unittest
-from src.trivial_tools import add
+from src.trivial_tools import add, sub
 
 
 class TestCalc(unittest.TestCase):
@@ -12,4 +12,3 @@ class TestCalc(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-   

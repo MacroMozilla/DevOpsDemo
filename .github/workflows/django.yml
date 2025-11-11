@@ -22,75 +22,183 @@ on:
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
+      
+      # ----------------------------------------------------
+      # 0. Send initial Slack notification (progress 0%)
+      # ----------------------------------------------------
+               - name: Slack Start Message
+               id: slack_start
+               run: |
+                 payload=$(cat <<EOF
+                 {
+                   "channel": "${{ secrets.SLACK_CHANNEL_ID }}",
+                   "text": "CI/CD Pipeline started...",
+                   "blocks": [
+                     {
+                       "type": "header",
+                       "text": { "type": "plain_text", "text": "CI/CD Pipeline Started 🚀" }
+                     },
+                     {
+                       "type": "section",
+                       "text": { "type": "mrkdwn",
+                         "text": "*Repository:* ${{ github.repository }}\n*Branch:* ${{ github.ref_name }}\n*Actor:* ${{ github.actor }}\n*Commit:* ${{ github.sha }}\n*Message:* ${{ github.event.head_commit.message }}"
+                       }
+                     },
+                     {
+                       "type": "section",
+                       "text": { "type": "mrkdwn", "text": "*Progress:* 🟦⬛⬛⬛⬛⬛⬛ 0%" }
+                     }
+                   ]
+                 }
+                 EOF
+                 )
+                 
+                 response=$(curl -s -X POST \
+                   -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
+                   -H "Content-type: application/json" \
+                   --data "$payload" \
+                   https://slack.com/api/chat.postMessage)
+                 
+                 echo "ts=$(echo $response | jq -r '.ts')" >> $GITHUB_OUTPUT
+      
 
-    steps:
-      # -------------------------
-      # 1. Checkout code
-      # -------------------------
-      - name: Checkout code
-        uses: actions/checkout@v4
+      # ----------------------------------------------------
+      # Function for updating Slack message
+      # ----------------------------------------------------
+               - name: Define Slack Update Function
+                 shell: bash
+                 run: |
+                   update_progress() {
+                     STEP=$1
+                     TOTAL=7
+                     NAME="$2"
+                   
+                     COMPLETED=$((STEP))
+                     BLOCKS=$((COMPLETED * 7 / TOTAL))
+                     EMPTY=$((7 - BLOCKS))
+                   
+                     BAR=""
+                     for ((i=0;i<BLOCKS;i++)); do BAR+="🟩"; done
+                     for ((i=0;i<EMPTY;i++)); do BAR+="⬛"; done
+                   
+                     PERCENT=$((COMPLETED * 100 / TOTAL))
+                   
+                     curl -s -X POST \
+                       -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
+                       -H "Content-type: application/json" \
+                       --data "$(cat <<EOF
+                       {
+                         "channel": "${{ secrets.SLACK_CHANNEL_ID }}",
+                         "ts": "${{ steps.slack_start.outputs.ts }}",
+                         "blocks": [
+                           {
+                             "type": "header",
+                             "text": { "type": "plain_text", "text": "CI/CD Pipeline Running 🚀" }
+                           },
+                           {
+                             "type": "section",
+                             "text": { "type": "mrkdwn", "text": "*Current Step:* $NAME\n*Progress:* $BAR $PERCENT%" }
+                           }
+                         ]
+                       }
+    EOF
+    )" \
+    https://slack.com/api/chat.update > /dev/null
+  }
 
-      # -------------------------
-      # 2. Ruff Lint
-      # -------------------------
-      - name: Ruff Lint
-        uses: chartboost/ruff-action@v1
+    export -f update_progress
 
-      # -------------------------
-      # 3. Run Unit Tests
-      # -------------------------
-      - name: Run Unit Tests
-        run: |
-          python -m unittest discover -s tests
 
-      # -------------------------
-      # 4. Set version (YYMMDD-SHORTSHA-USERNAME)
-      # -------------------------
-      - name: Set Version
-        id: vars
-        run: |
-          DATE=$(date +'%y%m%d')
-          SHA=$(echo ${{ github.sha }} | cut -c1-7)
-          USER=${{ github.actor }}
-          echo "VERSION=${DATE}-${SHA}-${USER}" >> $GITHUB_ENV
+    # ----------------------------------------------------
+    # 1. Checkout code
+    # ----------------------------------------------------
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Update Slack (Step 1)
+      run: update_progress 1 "Checkout code"
 
-      # -------------------------
-      # 5. Build Docker image
-      # -------------------------
-      - name: Build Docker image
-        run: |
-          docker build -f Dockerfile \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/django-app:${{ env.VERSION }} \
-            -t ${{ secrets.DOCKERHUB_USERNAME }}/django-app:latest .
 
-      # -------------------------
-      # 6. Login to Docker Hub
-      # -------------------------
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+    # ----------------------------------------------------
+    # 2. Ruff Lint
+    # ----------------------------------------------------
+    - name: Ruff Lint
+      uses: chartboost/ruff-action@v1
+    - name: Update Slack (Step 2)
+      run: update_progress 2 "Ruff Lint"
 
-      # -------------------------
-      # 7. Push Docker image
-      # -------------------------
-      - name: Push Docker image
-        run: |
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/django-app:${{ env.VERSION }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/django-app:latest
 
-      - name: Send message to Slack
-        run: |
-          curl -X POST -H 'Content-type: application/json' \
+    # ----------------------------------------------------
+    # 3. Run Unit Tests
+    # ----------------------------------------------------
+    - name: Run Unit Tests
+      run: python -m unittest discover -s tests
+    - name: Update Slack (Step 3)
+      run: update_progress 3 "Run Unit Tests"
+
+
+    # ----------------------------------------------------
+    # 4. Set version
+    # ----------------------------------------------------
+    - name: Set Version
+      id: vars
+      run: |
+        DATE=$(date +'%y%m%d')
+        SHA=$(echo ${{ github.sha }} | cut -c1-7)
+        USER=${{ github.actor }}
+        echo "VERSION=${DATE}-${SHA}-${USER}" >> $GITHUB_ENV
+    - name: Update Slack (Step 4)
+      run: update_progress 4 "Set Version"
+
+
+    # ----------------------------------------------------
+    # 5. Build Docker image
+    # ----------------------------------------------------
+    - name: Build Docker image
+      run: |
+        docker build -f Dockerfile \
+          -t ${{ secrets.DOCKERHUB_USERNAME }}/django-app:${{ env.VERSION }} \
+          -t ${{ secrets.DOCKERHUB_USERNAME }}/django-app:latest .
+    - name: Update Slack (Step 5)
+      run: update_progress 5 "Build Docker image"
+
+
+    # ----------------------------------------------------
+    # 6. Login to Docker Hub
+    # ----------------------------------------------------
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Update Slack (Step 6)
+      run: update_progress 6 "Login to Docker Hub"
+
+
+    # ----------------------------------------------------
+    # 7. Push Docker image
+    # ----------------------------------------------------
+    - name: Push Docker image
+      run: |
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/django-app:${{ env.VERSION }}
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/django-app:latest
+    - name: Update Slack (Step 7)
+      run: update_progress 7 "Push Docker image"
+
+
+    # ----------------------------------------------------
+    # FAILURE HANDLER
+    # ----------------------------------------------------
+    - name: Slack Failure Notification
+      if: failure()
+      run: |
+        curl -X POST \
+          -H "Authorization: Bearer ${{ secrets.SLACK_BOT_TOKEN }}" \
+          -H "Content-type: application/json" \
           --data "{
-            \"text\": \":rocket: Repository *${{ github.repository }}* received a new *${{ github.event_name }}* event!\n
-            Actor: *${{ github.actor }}*\n
-            Branch: *${{ github.ref_name }}*\n
-            <${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}|View Commit>\n
-            Commit Message: *${{ github.event.head_commit.message }}*\"
+            \"channel\": \"${{ secrets.SLACK_CHANNEL_ID }}\",
+            \"text\": \"❌ CI/CD Pipeline Failed at step: ${{ github.job }}\"
           }" \
-          ${{ secrets.SLACK_WEBHOOK_URL }}
+          https://slack.com/api/chat.postMessage
 
 #  call_lambda:
 #    runs-on: ubuntu-latest
