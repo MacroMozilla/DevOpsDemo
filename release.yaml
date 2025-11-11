@@ -6,15 +6,11 @@ project:
     - Build and push Docker images to Docker Hub
     - Send deployment notifications to Slack
 
-version: "0.0.0.1"
+version: "0.0.1"
 changes:
   added:
-    - Automated CI/CD workflow (triggered on Push & PR)
-    - Auto-generate version tag for Docker builds
-    - Build and push Docker images to Docker Hub
-    - Slack notification integration
+    - None
   fixed:
     - None
   changed:
-    - Improved build pipeline with multi-stage process: Lint → Test → Build → Push
-    - Refined ignored paths to avoid triggering on irrelevant commits
+    - change version standard
