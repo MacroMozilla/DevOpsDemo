@@ -86,7 +86,15 @@ jobs:
           echo "🏷️ RELEASE_VERSION=${RELEASE_VERSION}"
 
       # -------------------------
-      # 5.2 Build Docker image
+      # 5.2 Set DockerHub username
+      # -------------------------
+      - name: Set DockerHub username
+        run: |
+          echo "DOCKERHUB_USERNAME=${{ secrets.DOCKERHUB_USERNAME }}" >> $GITHUB_ENV
+          echo "🐳 DockerHub username set to ${{ secrets.DOCKERHUB_USERNAME }}"
+
+      # -------------------------
+      # 5.3 Build Docker image
       # -------------------------
       - name: Build Docker image
         run: |
