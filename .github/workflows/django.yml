@@ -19,8 +19,14 @@ on:
       - 'docs/**'
       - '.gitignore'
 
+
+permissions:
+  contents: read
+  security-events: write
+
+
 jobs:
-  build_and_push:
+  check_build_push:
     runs-on: ubuntu-latest
 
     steps:
