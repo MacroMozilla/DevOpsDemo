@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <h2>Welcome to DevOpsDemo API</h2>
+    <p>This project demonstrates modern DevOps practices including:</p>
+    <ul style="margin: 15px 0 15px 30px;">
+        <li>CI/CD with GitHub Actions</li>
+        <li>Docker containerization (development and production)</li>
+        <li>Automated testing with pytest and coverage reporting</li>
+        <li>Security scanning (CodeQL, Safety, Trivy)</li>
+        <li>Database migration testing</li>
+        <li>API documentation with OpenAPI/Swagger</li>
+        <li>RESTful API design</li>
+        <li>Monitoring and logging</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2>Available API Endpoints</h2>
+    <ul class="endpoint-list">
+        <li>
+            <strong>GET</strong> <code>/api/health/</code>
+            <p>Health check endpoint showing system status and configuration</p>
+        </li>
+        <li>
+            <strong>GET</strong> <code>/api/docker/repos/</code>
+            <p>List Docker Hub repositories (requires credentials)</p>
+        </li>
+        <li>
+            <strong>GET</strong> <code>/api/docker/tags/&lt;repo_name&gt;/</code>
+            <p>List tags for a specific Docker repository</p>
+        </li>
+        <li>
+            <strong>POST</strong> <code>/api/ai/chat/</code>
+            <p>Chat with DeepSeek AI (requires API key)</p>
+        </li>
+        <li>
+            <strong>GET</strong> <code>/api/logs/</code>
+            <p>View API call history and logs</p>
+        </li>
+        <li>
+            <strong>GET</strong> <code>/api/logs/stats/</code>
+            <p>Get API call statistics and analytics</p>
+        </li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2>Documentation</h2>
+    <p>Explore the complete API documentation using our interactive tools:</p>
+    <div style="margin-top: 15px;">
+        <a href="/api/docs/" class="btn" style="margin-right: 10px;">Swagger UI</a>
+        <a href="/api/redoc/" class="btn">ReDoc</a>
+        <a href="/api/schema/" class="btn">OpenAPI Schema</a>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Quick Start</h2>
+    <p><strong>Development Mode:</strong></p>
+    <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto;">
+docker-compose up web-dev
+# Access at http://localhost:8000
+    </pre>
+
+    <p style="margin-top: 20px;"><strong>Production Mode:</strong></p>
+    <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto;">
+docker-compose up web-prod
+# Access at http://localhost:8001
+    </pre>
+
+    <p style="margin-top: 20px;"><strong>Run Tests:</strong></p>
+    <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto;">
+pytest --cov=. --cov-report=html
+    </pre>
+</div>
+
+<div class="card">
+    <h2>Project Structure</h2>
+    <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 0.9em;">
+DevOpsDemo/
+├── api/                    # REST API application
+│   ├── models.py          # APICallLog model
+│   ├── views.py           # API endpoints
+│   ├── serializers.py     # DRF serializers
+│   ├── urls.py            # URL routing
+│   └── tests.py           # API tests
+├── src/                   # Utility modules
+│   └── fctn_tools/        # Docker & DeepSeek integrations
+├── .github/workflows/     # CI/CD pipeline
+├── Dockerfile             # Production container
+├── Dockerfile.dev         # Development container
+├── docker-compose.yml     # Multi-environment setup
+├── pytest.ini             # Test configuration
+└── requirements.txt       # Python dependencies
+    </pre>
+</div>
+
+<div class="card">
+    <h2>CI/CD Pipeline</h2>
+    <p>Every push to master triggers:</p>
+    <ol style="margin: 15px 0 15px 30px;">
+        <li><strong>Code Linting</strong> - Ruff checks code quality</li>
+        <li><strong>Security Analysis</strong> - CodeQL scans for vulnerabilities</li>
+        <li><strong>Database Migrations</strong> - Validates migration files</li>
+        <li><strong>Tests with Coverage</strong> - pytest with 70% minimum coverage</li>
+        <li><strong>Dependency Scanning</strong> - Safety checks for known vulnerabilities</li>
+        <li><strong>Docker Build</strong> - Creates production-ready image</li>
+        <li><strong>Container Scanning</strong> - Trivy scans Docker image</li>
+        <li><strong>Docker Push</strong> - Publishes to Docker Hub</li>
+        <li><strong>Slack Notification</strong> - Deployment status updates</li>
+    </ol>
+</div>
+{% endblock %}

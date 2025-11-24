@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  web-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: devopsdemo-dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - DEBUG=True
+      - DJANGO_SETTINGS_MODULE=DevOpsDemo.settings
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME:-}
+      - DOCKERHUB_TOKEN=${DOCKERHUB_TOKEN:-}
+    command: python manage.py runserver 0.0.0.0:8000
+
+  web-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: devopsdemo-prod
+    ports:
+      - "8001:8000"
+    environment:
+      - DEBUG=False
+      - DJANGO_SETTINGS_MODULE=DevOpsDemo.settings
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - DOCKERHUB_USERNAME=${DOCKERHUB_USERNAME:-}
+      - DOCKERHUB_TOKEN=${DOCKERHUB_TOKEN:-}
+    restart: unless-stopped

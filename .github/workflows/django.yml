@@ -58,11 +58,56 @@ jobs:
 
 
       # -------------------------
-      # 4. Run Unit Tests
+      # 4. Set up Python
       # -------------------------
-      - name: Run Unit Tests
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      # -------------------------
+      # 5. Install Dependencies
+      # -------------------------
+      - name: Install Dependencies
         run: |
-          python -m unittest discover -s tests
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # -------------------------
+      # 6. Run Database Migrations
+      # -------------------------
+      - name: Run Database Migrations
+        run: |
+          python manage.py makemigrations --check --dry-run
+          python manage.py migrate
+
+      # -------------------------
+      # 7. Run Unit Tests with Coverage
+      # -------------------------
+      - name: Run Tests with Coverage
+        run: |
+          pytest --cov=. --cov-report=xml --cov-report=term-missing --cov-fail-under=70
+
+      # -------------------------
+      # 8. Upload Coverage Reports
+      # -------------------------
+      - name: Upload Coverage to Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: |
+            htmlcov/
+            coverage.xml
+          retention-days: 30
+
+      # -------------------------
+      # 9. Security Scanning - Dependencies
+      # -------------------------
+      - name: Run Safety Check
+        continue-on-error: true
+        run: |
+          safety check --json || echo "⚠️ Safety check found vulnerabilities"
 
       - name: Install yq
         run: sudo apt-get update && sudo apt-get install -y yq
@@ -127,7 +172,22 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # -------------------------
-      # 7. Push Docker image
+      # 7. Scan Docker Image for Vulnerabilities
+      # -------------------------
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/django-app:${{ env.VERSION }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      # -------------------------
+      # 8. Push Docker image
       # -------------------------
       - name: Push Docker image
         run: |
