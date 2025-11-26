@@ -1,23 +1,8 @@
 name: Manual Docker Build & Push ✋
 
 on:
-  push:
-    branches:
-      - master
-    paths-ignore:
-      - README.md
-      - '**/*.md'
-      - 'docs/**'
-      - '.gitignore'
+  workflow_dispatch:
 
-  pull_request:
-    branches:
-      - master
-    paths-ignore:
-      - README.md
-      - '**/*.md'
-      - 'docs/**'
-      - '.gitignore'
 
 
 permissions:
