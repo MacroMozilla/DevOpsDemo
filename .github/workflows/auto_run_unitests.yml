@@ -1,0 +1,116 @@
+name: Run Unit Tests ♻
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - '.github/**'
+
+  pull_request:
+    branches: [ master ]
+    paths:
+      - '.github/**'
+
+
+permissions:
+  actions: write
+  contents: read
+  security-events: write
+
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
+
+    steps:
+      - name: Delete ALL workflow runs in this repository
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ secrets.DELETE_ACTION_RUN_TOKEN }}
+          repository: ${{ github.repository }}
+          retain_days: 0                # Default is 30 days; must be 0 to delete ALL runs
+          keep_minimum_runs: 0          # Do not keep any runs
+          delete_workflow_pattern: "${{ github.workflow }}"
+          delete_workflow_by_state_pattern: "ALL"
+          delete_run_by_conclusion_pattern: "ALL"
+          dry_run: false
+
+  unittests:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest, macos-latest ]
+    runs-on: ${{ matrix.os }}
+
+    needs: [ cleanup ]
+    steps:
+      # -------------------------
+      # 0. Set up Python
+      # -------------------------
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # -------------------------
+      # 1. Set up Python
+      # -------------------------
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11.9"
+
+      # -------------------------
+      # 2. Install dependencies
+      # -------------------------
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # -------------------------
+      # 3. Run Unit Tests
+      # -------------------------
+
+      - name: Run Unit Tests
+        run: |
+          python -m unittest discover -s tests -v
+
+      # -------------------------
+      # 4. Run Database Migrations
+      # -------------------------
+      - name: Run Database Migrations
+        run: |
+          python manage.py makemigrations --check --dry-run
+          python manage.py migrate
+
+      # -------------------------
+      # 5. Run Unit Tests with Coverage
+      # -------------------------
+      - name: Run Tests with Coverage
+        run: |
+          pytest --cov=. --cov-report=xml --cov-report=term-missing --cov-fail-under=70
+
+      # -------------------------
+      # 6. Upload Coverage Reports
+      # -------------------------
+      - name: Upload Coverage to Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            htmlcov/
+            coverage.xml
+          retention-days: 30
+
+      # -------------------------
+      # 7. Security Scanning - Dependencies
+      # -------------------------
+      - name: Run Safety Check
+        continue-on-error: true
+        run: |
+          safety check --json || echo "⚠️ Safety check found vulnerabilities"
+
+      - name: Install yq
+        run: sudo apt-get update && sudo apt-get install -y yq

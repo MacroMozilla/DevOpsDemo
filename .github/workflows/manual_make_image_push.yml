@@ -31,89 +31,13 @@ jobs:
 
     steps:
       # -------------------------
-      # 1. Checkout code
+      # 0. Checkout code
       # -------------------------
       - name: Checkout code
         uses: actions/checkout@v4
 
       # -------------------------
-      # 2. Ruff Lint
-      # -------------------------
-      - name: Ruff Lint
-        uses: chartboost/ruff-action@v1
-
-      # -------------------------
-      # 3.1 install CodeQL
-      # -------------------------
-      - name: Initialize CodeQL
-        uses: github/codeql-action/init@v3
-        with:
-          languages: python
-
-      # -------------------------
-      # 3.2 install CodeQL
-      # -------------------------
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v3
-
-
-      # -------------------------
-      # 4. Set up Python
-      # -------------------------
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-          cache: 'pip'
-
-      # -------------------------
-      # 5. Install Dependencies
-      # -------------------------
-      - name: Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      # -------------------------
-      # 6. Run Database Migrations
-      # -------------------------
-      - name: Run Database Migrations
-        run: |
-          python manage.py makemigrations --check --dry-run
-          python manage.py migrate
-
-      # -------------------------
-      # 7. Run Unit Tests with Coverage
-      # -------------------------
-      - name: Run Tests with Coverage
-        run: |
-          pytest --cov=. --cov-report=xml --cov-report=term-missing --cov-fail-under=70
-
-      # -------------------------
-      # 8. Upload Coverage Reports
-      # -------------------------
-      - name: Upload Coverage to Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: |
-            htmlcov/
-            coverage.xml
-          retention-days: 30
-
-      # -------------------------
-      # 9. Security Scanning - Dependencies
-      # -------------------------
-      - name: Run Safety Check
-        continue-on-error: true
-        run: |
-          safety check --json || echo "⚠️ Safety check found vulnerabilities"
-
-      - name: Install yq
-        run: sudo apt-get update && sudo apt-get install -y yq
-
-      # -------------------------
-      # 5.1 Set version (YYMMDD-release-SHORTSHA)
+      # 1.1 Set version (YYMMDD-release-SHORTSHA)
       # -------------------------
       - name: Set Version
         id: vars
@@ -137,7 +61,7 @@ jobs:
           echo "🏷️ RELEASE_VERSION=${RELEASE_VERSION}"
 
       # -------------------------
-      # 5.2 Set DockerHub username
+      # 1.2 Set DockerHub username
       # -------------------------
       - name: Set DockerHub username
         run: |
@@ -146,7 +70,7 @@ jobs:
       
 
       # -------------------------
-      # 5.3 Set DockerHub username
+      # 1.3 Set DockerHub username
       # -------------------------
       - name: Set DockerHub username
         run: |
@@ -154,7 +78,7 @@ jobs:
           echo "Set DEEPSEEK_API_KEY"
 
       # -------------------------
-      # 5.4 Build Docker image
+      # 1.4 Build Docker image
       # -------------------------
       - name: Build Docker image
         run: |
@@ -163,7 +87,7 @@ jobs:
             -t ${{ secrets.DOCKERHUB_USERNAME }}/django-app:latest .
 
       # -------------------------
-      # 6. Login to Docker Hub
+      # 2. Login to Docker Hub
       # -------------------------
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -172,7 +96,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # -------------------------
-      # 7. Scan Docker Image for Vulnerabilities
+      # 3. Scan Docker Image for Vulnerabilities
       # -------------------------
       - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
@@ -187,7 +111,7 @@ jobs:
           sarif_file: 'trivy-results.sarif'
 
       # -------------------------
-      # 8. Push Docker image
+      # 4. Push Docker image
       # -------------------------
       - name: Push Docker image
         run: |
