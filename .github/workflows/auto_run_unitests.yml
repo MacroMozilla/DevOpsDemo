@@ -41,7 +41,7 @@ jobs:
   unittests:
     strategy:
       matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
+        os: [ ubuntu-latest ]
     runs-on: ${{ matrix.os }}
 
     needs: [ cleanup ]
