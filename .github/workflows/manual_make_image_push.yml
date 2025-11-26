@@ -1,4 +1,4 @@
-name: Django CI & Docker Build
+name: Manual Docker Build & Push ✋
 
 on:
   push:
