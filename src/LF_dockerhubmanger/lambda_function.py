@@ -10,7 +10,7 @@ def get_repos():
     return repos
 
 
-def get_tags_by_repo():
+def get_tags_by_repo(repo):
     tags = manager.get_tags_by_repo(repo)
     return tags
 
