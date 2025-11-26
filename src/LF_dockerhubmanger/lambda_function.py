@@ -1,6 +1,4 @@
-import json
-
-from docker_tools import *
+from docker_tools import DockerHubManager
 
 manager = DockerHubManager()
 
