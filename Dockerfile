@@ -33,6 +33,10 @@ COPY --chown=appuser:appuser . .
 # Run database migrations and collect static files
 RUN python manage.py collectstatic --noinput || true
 
+# Copy entrypoint script and fix line endings (CRLF -> LF)
+COPY --chown=appuser:appuser entrypoint.sh /app/entrypoint.sh
+RUN sed -i 's/\r$//' /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
 # Switch to non-root user
 USER appuser
 
@@ -44,10 +48,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD python -c "import requests; requests.get('http://localhost:8000/api/health/')" || exit 1
 
 # Start the Django application using Gunicorn with optimized settings
-CMD ["gunicorn", "DevOpsDemo.wsgi:application", \
-     "--bind", "0.0.0.0:8000", \
-     "--workers", "4", \
-     "--timeout", "120", \
-     "--access-logfile", "-", \
-     "--error-logfile", "-", \
-     "--log-level", "info"]
+ENTRYPOINT ["/app/entrypoint.sh"]
