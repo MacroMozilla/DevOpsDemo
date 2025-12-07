@@ -35,7 +35,7 @@ jobs:
           SHA=$(echo ${{ github.sha }} | cut -c1-7)
           
           # Generate build date and short commit hash
-          BRANCH=$(echo "${{ github.ref_name }}" | sed 's/\//_/g')
+          BRANCH=$(echo "${{ github.ref_name }}" | sed 's/[\/\-]/_/g')
           
           # Compose final build version
           VERSION="${BRANCH}-${DATE}-${RELEASE_VERSION}-${SHA}"
