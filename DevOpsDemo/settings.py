@@ -158,11 +158,20 @@ REST_FRAMEWORK = {
 
 # Spectacular (OpenAPI/Swagger) Configuration
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'DevOpsDemo API',
-    'DESCRIPTION': 'API for demonstrating DevOps practices with Django',
+    'TITLE': 'DevOps POC - New UI Variant API',
+    'DESCRIPTION': 'Modern API for demonstrating DevOps best practices with Django REST Framework',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,
+    'SWAGGER_UI_SETTINGS': {
+        'deepLinking': True,
+        'persistAuthorization': True,
+        'displayOperationId': True,
+        'filter': True,
+        'theme': {
+            'primaryColor': '#0891b2',
+        }
+    },
 }
 
 # CORS Configuration

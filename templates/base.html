@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}DevOpsDemo - API Dashboard{% endblock %}</title>
+    <title>{% block title %}DevOps POC - New UI Variant{% endblock %}</title>
     <style>
         * {
             margin: 0;
@@ -14,102 +14,127 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             line-height: 1.6;
-            color: #e4e4e7;
-            background: #0c0a09;
+            color: #1e293b;
+            background: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%);
+            background-attachment: fixed;
             min-height: 100vh;
             padding: 20px;
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
-            background: #1c1917;
-            border-radius: 15px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.25);
             overflow: hidden;
-            border: 1px solid #292524;
         }
 
         header {
-            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            background: linear-gradient(135deg, #1e40af 0%, #0891b2 100%);
             color: white;
-            padding: 30px;
-            text-align: center;
+            padding: 50px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="40" fill="rgba(255,255,255,0.03)"/></svg>');
+            opacity: 0.5;
         }
 
         header h1 {
-            font-size: 2.5em;
+            font-size: 3em;
             margin-bottom: 10px;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: 800;
+            position: relative;
+            letter-spacing: -1px;
         }
 
         header p {
-            font-size: 1.1em;
-            opacity: 0.9;
+            font-size: 1.2em;
+            opacity: 0.95;
+            position: relative;
+            font-weight: 300;
         }
 
         nav {
-            background: #292524;
-            padding: 15px 30px;
-            border-bottom: 1px solid #44403c;
+            background: #f1f5f9;
+            padding: 0;
+            border-bottom: 3px solid #0891b2;
+            display: flex;
+            justify-content: center;
         }
 
         nav a {
-            color: #a8a29e;
+            color: #0f172a;
             text-decoration: none;
-            padding: 10px 20px;
-            margin: 0 5px;
-            border-radius: 5px;
+            padding: 18px 30px;
+            margin: 0;
             transition: all 0.3s;
             display: inline-block;
-            font-weight: 500;
+            font-weight: 600;
+            border-bottom: 3px solid transparent;
+            position: relative;
+            top: 3px;
         }
 
         nav a:hover {
-            background: #dc2626;
-            color: white;
+            background: #e0f2fe;
+            border-bottom-color: #0891b2;
+            color: #0891b2;
         }
 
         main {
-            padding: 30px;
+            padding: 40px;
+            background: #f8fafc;
         }
 
         .card {
-            background: #292524;
-            border-radius: 10px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            border-left: 4px solid #dc2626;
-            border: 1px solid #44403c;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid #14b8a6;
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
         }
 
         .card h2 {
-            color: #f87171;
-            margin-bottom: 15px;
-            font-size: 1.5em;
-        }
-
-        .card p {
-            color: #a8a29e;
+            color: #0891b2;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            font-weight: 700;
         }
 
         .btn {
-            background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+            background: linear-gradient(135deg, #0891b2 0%, #14b8a6 100%);
             color: white;
-            padding: 12px 30px;
+            padding: 14px 35px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             font-size: 1em;
-            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 600;
+            transition: all 0.3s;
             text-decoration: none;
             display: inline-block;
         }
 
         .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(220, 38, 38, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(8, 145, 178, 0.4);
         }
 
         .endpoint-list {
@@ -118,97 +143,58 @@
         }
 
         .endpoint-list li {
-            padding: 15px;
-            margin: 10px 0;
-            background: #44403c;
-            border-radius: 5px;
-            border-left: 3px solid #22c55e;
-            color: #e4e4e7;
+            padding: 18px 20px;
+            margin: 12px 0;
+            background: #f0fdfa;
+            border-radius: 8px;
+            border-left: 4px solid #0891b2;
+            transition: all 0.2s;
+        }
+
+        .endpoint-list li:hover {
+            background: #ccfbf1;
+            border-left-width: 6px;
         }
 
         .endpoint-list code {
-            background: #57534e;
-            padding: 2px 8px;
-            border-radius: 3px;
+            background: #e0f2fe;
+            padding: 4px 10px;
+            border-radius: 5px;
             font-family: 'Courier New', monospace;
-            color: #fbbf24;
+            color: #0c4a6e;
+            font-weight: 600;
         }
 
         footer {
-            background: #292524;
-            padding: 20px;
+            background: linear-gradient(135deg, #1e40af 0%, #0891b2 100%);
+            padding: 30px;
             text-align: center;
-            color: #78716c;
-            border-top: 1px solid #44403c;
+            color: white;
+        }
+
+        footer p {
+            margin: 5px 0;
+            opacity: 0.9;
         }
 
         .status-badge {
             display: inline-block;
-            padding: 5px 10px;
-            border-radius: 20px;
+            padding: 6px 14px;
+            border-radius: 25px;
             font-size: 0.85em;
-            font-weight: 600;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .status-success {
-            background: rgba(34, 197, 94, 0.2);
-            color: #22c55e;
-            border: 1px solid #22c55e;
+            background: #d1fae5;
+            color: #065f46;
         }
 
         .status-warning {
-            background: rgba(234, 179, 8, 0.2);
-            color: #eab308;
-            border: 1px solid #eab308;
-        }
-
-        .status-error {
-            background: rgba(239, 68, 68, 0.2);
-            color: #ef4444;
-            border: 1px solid #ef4444;
-        }
-
-        /* 滚动条样式 */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #292524;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #57534e;
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #78716c;
-        }
-
-        /* 链接样式 */
-        a {
-            color: #f87171;
-            transition: color 0.2s;
-        }
-
-        a:hover {
-            color: #fca5a5;
-        }
-
-        /* 代码块样式 */
-        pre {
-            background: #0c0a09;
-            border: 1px solid #44403c;
-            border-radius: 8px;
-            padding: 15px;
-            overflow-x: auto;
-            color: #e4e4e7;
-        }
-
-        code {
-            font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+            background: #fef3c7;
+            color: #92400e;
         }
     </style>
     {% block extra_css %}{% endblock %}
@@ -216,15 +202,15 @@
 <body>
     <div class="container">
         <header>
-            <h1>🚀 DevOpsDemo API</h1>
-            <p>Demonstrating DevOps Best Practices with Django REST Framework</p>
+            <h1>DevOps POC - New UI Variant</h1>
+            <p>Modern Interface for DevOps Best Practices & API Management</p>
         </header>
 
         <nav>
-            <a href="/">🏠 Home</a>
-            <a href="/api/docs/">📖 API Documentation</a>
-            <a href="/api/health/">💚 Health Check</a>
-            <a href="/admin/">⚙️ Admin</a>
+            <a href="/">Home</a>
+            <a href="/api/docs/">API Documentation</a>
+            <a href="/api/health/">Health Check</a>
+            <a href="/admin/">Admin</a>
         </nav>
 
         <main>
@@ -232,8 +218,8 @@
         </main>
 
         <footer>
-            <p>DevOpsDemo - Educational Project for Learning DevOps Practices</p>
-            <p>Built with Django, Django REST Framework, and Docker</p>
+            <p>DevOps POC - New UI Variant | Educational Project</p>
+            <p>Powered by Django REST Framework, Docker & Modern DevOps Practices</p>
         </footer>
     </div>
 

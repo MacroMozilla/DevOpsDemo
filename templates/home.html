@@ -1,115 +1,180 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<style>
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin-bottom: 30px;
+    }
+
+    .feature-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        font-weight: 600;
+        margin: 5px 5px 5px 0;
+    }
+
+    .endpoint-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        border: 2px solid #e0f2fe;
+        transition: all 0.3s;
+    }
+
+    .endpoint-card:hover {
+        border-color: #0891b2;
+        box-shadow: 0 5px 20px rgba(8, 145, 178, 0.15);
+    }
+
+    .method-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 5px;
+        font-size: 0.8em;
+        font-weight: 700;
+        margin-right: 10px;
+    }
+
+    .method-get {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .method-post {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+
+    .hero-banner {
+        background: linear-gradient(135deg, #0ea5e9 0%, #14b8a6 100%);
+        color: white;
+        padding: 40px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+
+    .hero-banner h2 {
+        color: white;
+        font-size: 2.2em;
+        margin-bottom: 15px;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
-<div class="card">
-    <h2>Welcome to DevOpsDemo API</h2>
-    <p>This project demonstrates modern DevOps practices including:</p>
-    <ul style="margin: 15px 0 15px 30px;">
-        <li>CI/CD with GitHub Actions</li>
-        <li>Docker containerization (development and production)</li>
-        <li>Automated testing with pytest and coverage reporting</li>
-        <li>Security scanning (CodeQL, Safety, Trivy)</li>
-        <li>Database migration testing</li>
-        <li>API documentation with OpenAPI/Swagger</li>
-        <li>RESTful API design</li>
-        <li>Monitoring and logging</li>
-    </ul>
+<div class="hero-banner">
+    <h2>🚀 Welcome to DevOps POC Platform</h2>
+    <p style="font-size: 1.1em; opacity: 0.95;">Experience modern DevOps practices with our comprehensive API management system</p>
 </div>
 
 <div class="card">
-    <h2>Available API Endpoints</h2>
-    <ul class="endpoint-list">
-        <li>
-            <strong>GET</strong> <code>/api/health/</code>
-            <p>Health check endpoint showing system status and configuration</p>
-        </li>
-        <li>
-            <strong>GET</strong> <code>/api/docker/repos/</code>
-            <p>List Docker Hub repositories (requires credentials)</p>
-        </li>
-        <li>
-            <strong>GET</strong> <code>/api/docker/tags/&lt;repo_name&gt;/</code>
-            <p>List tags for a specific Docker repository</p>
-        </li>
-        <li>
-            <strong>POST</strong> <code>/api/ai/chat/</code>
-            <p>Chat with DeepSeek AI (requires API key)</p>
-        </li>
-        <li>
-            <strong>GET</strong> <code>/api/logs/</code>
-            <p>View API call history and logs</p>
-        </li>
-        <li>
-            <strong>GET</strong> <code>/api/logs/stats/</code>
-            <p>Get API call statistics and analytics</p>
-        </li>
-    </ul>
-</div>
-
-<div class="card">
-    <h2>Documentation</h2>
-    <p>Explore the complete API documentation using our interactive tools:</p>
-    <div style="margin-top: 15px;">
-        <a href="/api/docs/" class="btn" style="margin-right: 10px;">Swagger UI</a>
-        <a href="/api/redoc/" class="btn">ReDoc</a>
-        <a href="/api/schema/" class="btn">OpenAPI Schema</a>
+    <h2>✨ Platform Features</h2>
+    <div style="margin-top: 20px;">
+        <span class="feature-badge">CI/CD Pipeline</span>
+        <span class="feature-badge">Docker Containers</span>
+        <span class="feature-badge">Automated Testing</span>
+        <span class="feature-badge">Security Scanning</span>
+        <span class="feature-badge">API Documentation</span>
+        <span class="feature-badge">Real-time Monitoring</span>
+        <span class="feature-badge">REST Architecture</span>
+        <span class="feature-badge">Cloud Ready</span>
     </div>
 </div>
 
 <div class="card">
-    <h2>Quick Start</h2>
-    <p><strong>Development Mode:</strong></p>
-    <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto;">
-docker-compose up web-dev
-# Access at http://localhost:8000
-    </pre>
+    <h2>📡 API Endpoints</h2>
+    <div class="grid-container" style="margin-top: 20px;">
+        <div class="endpoint-card">
+            <div><span class="method-badge method-get">GET</span><code>/api/health/</code></div>
+            <p style="margin-top: 10px; color: #64748b;">System health check with database connectivity status</p>
+        </div>
+        <div class="endpoint-card">
+            <div><span class="method-badge method-get">GET</span><code>/api/docker/repos/</code></div>
+            <p style="margin-top: 10px; color: #64748b;">List all Docker Hub repositories</p>
+        </div>
+        <div class="endpoint-card">
+            <div><span class="method-badge method-get">GET</span><code>/api/docker/tags/&lt;repo&gt;/</code></div>
+            <p style="margin-top: 10px; color: #64748b;">Get all tags for a Docker repository</p>
+        </div>
+        <div class="endpoint-card">
+            <div><span class="method-badge method-post">POST</span><code>/api/ai/chat/</code></div>
+            <p style="margin-top: 10px; color: #64748b;">Interactive chat with DeepSeek AI</p>
+        </div>
+        <div class="endpoint-card">
+            <div><span class="method-badge method-get">GET</span><code>/api/logs/</code></div>
+            <p style="margin-top: 10px; color: #64748b;">View complete API call history</p>
+        </div>
+        <div class="endpoint-card">
+            <div><span class="method-badge method-get">GET</span><code>/api/logs/stats/</code></div>
+            <p style="margin-top: 10px; color: #64748b;">Analytics and performance metrics</p>
+        </div>
+    </div>
+</div>
 
-    <p style="margin-top: 20px;"><strong>Production Mode:</strong></p>
-    <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto;">
-docker-compose up web-prod
-# Access at http://localhost:8001
-    </pre>
+<div class="grid-container">
+    <div class="card">
+        <h2>📚 Documentation</h2>
+        <p style="color: #64748b; margin-bottom: 20px;">Interactive API documentation tools</p>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <a href="/api/docs/" class="btn">📖 Swagger UI</a>
+            <a href="/api/redoc/" class="btn">📘 ReDoc</a>
+            <a href="/api/schema/" class="btn">📋 OpenAPI Schema</a>
+        </div>
+    </div>
 
-    <p style="margin-top: 20px;"><strong>Run Tests:</strong></p>
-    <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto;">
-pytest --cov=. --cov-report=html
-    </pre>
+    <div class="card">
+        <h2>🚀 Quick Start</h2>
+        <p style="color: #64748b; margin-bottom: 15px;"><strong>Development Mode:</strong></p>
+        <pre style="background: #f0fdfa; padding: 15px; border-radius: 8px; border-left: 4px solid #14b8a6; overflow-x: auto; font-size: 0.9em;">docker-compose up web-dev
+# http://localhost:8000</pre>
+
+        <p style="margin-top: 15px; color: #64748b;"><strong>Production Mode:</strong></p>
+        <pre style="background: #f0fdfa; padding: 15px; border-radius: 8px; border-left: 4px solid #14b8a6; overflow-x: auto; font-size: 0.9em;">docker-compose up web-prod
+# http://localhost:8001</pre>
+    </div>
 </div>
 
 <div class="card">
-    <h2>Project Structure</h2>
-    <pre style="background: #f8f9fa; padding: 15px; border-radius: 5px; overflow-x: auto; font-size: 0.9em;">
+    <h2>🏗️ Project Structure</h2>
+    <pre style="background: #f0fdfa; padding: 20px; border-radius: 8px; border-left: 4px solid #0891b2; overflow-x: auto; font-size: 0.9em; color: #0f172a;">
 DevOpsDemo/
-├── api/                    # REST API application
-│   ├── models.py          # APICallLog model
-│   ├── views.py           # API endpoints
-│   ├── serializers.py     # DRF serializers
-│   ├── urls.py            # URL routing
-│   └── tests.py           # API tests
-├── src/                   # Utility modules
-│   └── fctn_tools/        # Docker & DeepSeek integrations
-├── .github/workflows/     # CI/CD pipeline
-├── Dockerfile             # Production container
-├── Dockerfile.dev         # Development container
-├── docker-compose.yml     # Multi-environment setup
-├── pytest.ini             # Test configuration
-└── requirements.txt       # Python dependencies
+├── 📁 api/                 # REST API application
+├── 📁 src/                 # Integration modules
+├── 📁 .github/workflows/   # CI/CD automation
+├── 🐳 Dockerfile          # Production container
+├── 🐳 Dockerfile.dev      # Development container
+├── ⚙️  docker-compose.yml  # Environment orchestration
+└── 📦 requirements.txt    # Dependencies
     </pre>
 </div>
 
 <div class="card">
-    <h2>CI/CD Pipeline</h2>
-    <p>Every push to master triggers:</p>
-    <ol style="margin: 15px 0 15px 30px;">
-        <li><strong>Code Linting</strong> - Ruff checks code quality</li>
-        <li><strong>Security Analysis</strong> - CodeQL scans for vulnerabilities</li>
-        <li><strong>Database Migrations</strong> - Validates migration files</li>
-        <li><strong>Tests with Coverage</strong> - pytest with 70% minimum coverage</li>
-        <li><strong>Dependency Scanning</strong> - Safety checks for known vulnerabilities</li>
-        <li><strong>Docker Build</strong> - Creates production-ready image</li>
-        <li><strong>Container Scanning</strong> - Trivy scans Docker image</li>
-        <li><strong>Docker Push</strong> - Publishes to Docker Hub</li>
-        <li><strong>Slack Notification</strong> - Deployment status updates</li>
-    </ol>
+    <h2>🔄 CI/CD Pipeline Stages</h2>
+    <div class="grid-container" style="margin-top: 20px;">
+        <div style="padding: 15px; background: #f0fdfa; border-radius: 8px; border-left: 4px solid #14b8a6;">
+            <strong style="color: #0891b2;">🔍 Code Quality</strong>
+            <p style="margin-top: 5px; font-size: 0.9em; color: #64748b;">Linting & security analysis</p>
+        </div>
+        <div style="padding: 15px; background: #f0fdfa; border-radius: 8px; border-left: 4px solid #14b8a6;">
+            <strong style="color: #0891b2;">🧪 Testing</strong>
+            <p style="margin-top: 5px; font-size: 0.9em; color: #64748b;">pytest with 65% coverage</p>
+        </div>
+        <div style="padding: 15px; background: #f0fdfa; border-radius: 8px; border-left: 4px solid #14b8a6;">
+            <strong style="color: #0891b2;">🔒 Security</strong>
+            <p style="margin-top: 5px; font-size: 0.9em; color: #64748b;">CodeQL, Safety, Trivy scans</p>
+        </div>
+        <div style="padding: 15px; background: #f0fdfa; border-radius: 8px; border-left: 4px solid #14b8a6;">
+            <strong style="color: #0891b2;">🐳 Container</strong>
+            <p style="margin-top: 5px; font-size: 0.9em; color: #64748b;">Build & push to Docker Hub</p>
+        </div>
+    </div>
 </div>
 {% endblock %}
